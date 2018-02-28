@@ -6,8 +6,10 @@
 {{ trigger }} {{ item.device }}
 {% endfor %}
 iface {{ item.device }} {{ item.family | default('inet', true) }} {{ item.method | default('dhcp', true) }}
-{% for key in item | difference(special_keys) %}
+{% for key in item %}
+{% if item not in special_keys %}
   {{ key }} {{ item[key] }}
+{% endif %}
 {% endfor %}
 
 {%- if item.bridge is defined -%}
