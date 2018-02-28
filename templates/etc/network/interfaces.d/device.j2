@@ -4,19 +4,13 @@
 auto {{ item.device }}
 {% endif %}
 iface {{ item.device }} {{ item.family | default('inet', true) }} {{ item.method | default('dhcp', true) }}
-{% for key in ['address', 'network', 'netmask', 'broadcast', 'gateway'] %}
-{%   if key in item %}
+{% for key in item %}
+{%   if key not in ['bridge', 'subnets', 'pre-up', 'up', 'down', 'post-down', 'nameservers'] %}
   {{ key }} {{ item[key] }}
 {%   endif %}
 {% endfor %}
 {%- if item.nameservers is defined %}
   dns-nameservers {{ item.nameservers | join(' ') }}
-{% endif %}
-{%- if item.dns_search is defined %}
-  dns-search {{ item.dns_search }}
-{% endif %}
-{%- if item.mtu is defined %}
-  mtu {{ item.mtu }}
 {% endif %}
 
 {%- if item.bridge is defined -%}
