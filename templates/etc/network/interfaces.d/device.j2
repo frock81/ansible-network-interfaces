@@ -1,6 +1,6 @@
 # {{ ansible_managed }}
 
-{% set special_keys = ['triggers', 'device', 'family', 'method', 'nameservers', 'bridge', 'subnets', 'pre-up', 'up', 'down', 'post-down']%}
+{% set special_keys = ['triggers', 'device', 'family', 'method', 'bridge', 'pre-up', 'up', 'down', 'post-down']%}
 
 {% for trigger in item.triggers %}
 {{ trigger }} {{ item.device }}
@@ -9,9 +9,6 @@ iface {{ item.device }} {{ item.family | default('inet', true) }} {{ item.method
 {% for key in item | difference(special_keys) %}
   {{ key }} {{ item[key] }}
 {% endfor %}
-{%- if item.nameservers is defined %}
-  dns-nameservers {{ item.nameservers | join(' ') }}
-{% endif %}
 
 {%- if item.bridge is defined -%}
 
@@ -20,15 +17,6 @@ iface {{ item.device }} {{ item.family | default('inet', true) }} {{ item.method
 {%     if key in item.bridge -%}
   bridge_{{ key }} {{ item.bridge[key] }}
 {%     endif %}
-{%   endfor %}
-{% endif %}
-
-{%- if item.subnets is defined %}
-
-  # additional subnets
-{%   for subnet in item.subnets %}
-  up ip addr add {{ subnet }} dev {{ item.device }}
-  down ip addr del {{ subnet }} dev {{ item.device }}
 {%   endfor %}
 {% endif %}
 
