@@ -4,10 +4,8 @@
 {{ trigger }} {{ item.device }}
 {% endfor %}
 iface {{ item.device }} {{ item.family | default('inet', true) }} {{ item.method | default('dhcp', true) }}
-{% for key in item %}
-{%   if key not in ['bridge', 'subnets', 'pre-up', 'up', 'down', 'post-down', 'nameservers'] %}
+{% for key in item | difference(['triggers', 'nameservers', 'bridge', 'subnets', 'pre-up', 'up', 'down', 'post-down']) %}
   {{ key }} {{ item[key] }}
-{%   endif %}
 {% endfor %}
 {%- if item.nameservers is defined %}
   dns-nameservers {{ item.nameservers | join(' ') }}
