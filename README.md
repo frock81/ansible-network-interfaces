@@ -81,6 +81,7 @@ MIT
 * Andreas Reischuck
 * Mark van Driel
 * Mischa ter Smitten
+* Christophe-Marie Duquesne
 
 #### Feedback, bug-reports, requests, ...
 
