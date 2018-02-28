@@ -2,12 +2,14 @@
 
 {% set special_keys = ['triggers', 'device', 'family', 'method', 'bridge', 'pre-up', 'up', 'down', 'post-down']%}
 
+{%- if item.triggers is defined -%}
 {% for trigger in item.triggers %}
 {{ trigger }} {{ item.device }}
 {% endfor %}
+{% endif %}
 iface {{ item.device }} {{ item.family | default('inet', true) }} {{ item.method | default('dhcp', true) }}
 {% for key in item %}
-{% if item not in special_keys %}
+{% if key not in special_keys %}
   {{ key }} {{ item[key] }}
 {% endif %}
 {% endfor %}
