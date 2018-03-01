@@ -1,6 +1,6 @@
 ## network-interfaces
 
-[![Build Status](https://travis-ci.org/Oefenweb/ansible-network-interfaces.svg?branch=master)](https://travis-ci.org/Oefenweb/ansible-network-interfaces) [![Ansible Galaxy](http://img.shields.io/badge/ansible--galaxy-network--interfaces-blue.svg)](https://galaxy.ansible.com/tersmitten/network-interfaces)
+[![Build Status](https://travis-ci.org/chmduquesne/ansible-network-interfaces.svg?branch=master)](https://travis-ci.org/chmduquesne/ansible-network-interfaces) [![Ansible Galaxy](http://img.shields.io/badge/ansible--galaxy-ansible--network--interfaces-blue.svg)](https://galaxy.ansible.com/chmduquesne/ansible-network-interfaces)
 
 Manage network interfaces in Debian-like systems.
 
@@ -18,7 +18,7 @@ None
 * `network_interfaces_interfaces.{n}.triggers`: [default: `['auto']`]: When to enable|disable the interface
 * `network_interfaces_interfaces.{n}.family`: [default: `inet`]: Network type, eg. inet | inet6
 * `network_interfaces_interfaces.{n}.method`: [default: `dhcp`]: Method of the interface, eg. dhcp | static
-* `network_interfaces_interfaces.{n}.<arbitrary_option>`: [default: ``]: Additional arbitrary option to the interface
+* `network_interfaces_interfaces.{n}.<arbitrary_option>`: Additional arbitrary option to the interface
 
 ##### Bridge
 
@@ -43,13 +43,35 @@ None
 
 #### Example(s)
 
+##### Online.net Dedibox with dedicated ipv6 block
+
+```yaml
+# Assuming dhclient is configured with the right client id
+- hosts: dedibox
+  roles:
+    - chmduquesne.ansible-network-interfaces
+  vars:
+    network_interfaces_manage_devices: true
+    network_interfaces_interfaces:
+      - device: enp0s20
+        family: inet
+        method: dhcp
+      - device: enp0s20
+        family: inet6
+        method: dhcp
+        request_prefix: 1
+        up:
+          - "ip addr add {{ vault_inet6_address }}/{{ vault_inet6_netmask }} dev $IFACE"
+```
+
+
 ##### DigitalOcean droplet with private networking enabled
 
 ```yaml
 ---
 - hosts: all
   roles:
-    - network-interfaces
+    - chmduquesne.ansible-network-interfaces
   vars:
     network_interfaces_manage_devices: true
     network_interfaces_interfaces:
@@ -82,7 +104,3 @@ MIT
 * Mark van Driel
 * Mischa ter Smitten
 * Christophe-Marie Duquesne
-
-#### Feedback, bug-reports, requests, ...
-
-Are [welcome](https://github.com/Oefenweb/ansible-network-interfaces/issues)!
