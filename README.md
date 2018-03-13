@@ -27,12 +27,14 @@ None
 * `network_interfaces_interfaces.{n}.bridge.stp`: [optional]: Turn spanning tree protocol on/off
 * `network_interfaces_interfaces.{n}.bridge.fd`: [optional]: Bridge forward delay
 * `network_interfaces_interfaces.{n}.bridge.maxwait`: [optional]: Maximum time to wait for the bridge ports to get to the forwarding status
-* `network_interfaces_interfaces.{n}.bridge.waitport`: [optional]: Maximum time to wait for the specified ports to become available 
+* `network_interfaces_interfaces.{n}.bridge.waitport`: [optional]: Maximum time to wait for the specified ports to become available
 
 ##### Inline hook scripts
 
 * `network_interfaces_interfaces.{n}.pre-up`: [optional, default: `[]`]: List of pre-up script lines
 * `network_interfaces_interfaces.{n}.up`: [optional, default: `[]`]: List of up script lines
+* `network_interfaces_interfaces.{n}.post-up`: [optional, default: `[]`]: List of post-up script lines
+* `network_interfaces_interfaces.{n}.pre-down`: [optional, default: `[]`]: List of pre-down script lines
 * `network_interfaces_interfaces.{n}.down`: [optional, default: `[]`]: List of down script lines
 * `network_interfaces_interfaces.{n}.post-down`: [optional, default: `[]`]: List of post-down script lines
 
