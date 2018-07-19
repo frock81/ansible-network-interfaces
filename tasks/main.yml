@@ -14,12 +14,16 @@
   template:
     src: etc/network/interfaces.j2
     dest: "{{ network_interfaces_all_interfaces_path }}"
-  notify: restart network-interfaces
   when: network_interfaces_interfaces | length > 0
+  register: result
   tags:
     - configuration
     - network-interfaces
     - network-interfaces-all-interfaces
+
+- set_fact:
+    reboot: True
+  when: result.changed
 
 - name: list network interfaces
   command: find {{ network_interfaces_interface_path }} -type f
@@ -64,14 +68,34 @@
     - network-interfaces
     - network-interfaces-remove-configurations
 
-- name: restart devices
-  shell: >
-    [ -n "$(ifquery --list --exclude=lo)" ] && udevadm settle
-    && ip addr flush {{ item.item.device }}
-    && (ifdown {{ item.item.device }} --exclude=lo || true) && ifup {{ item.item.device }} --exclude=lo
+- set_fact:
+    reboot: True
   when: item.changed and item.item.auto | default(true)
   with_items: "{{ _network_interfaces_configuration_result.results | default([]) }}"
+
+- name: reboot
+  command: shutdown -r +1
+  async: 0
+  poll: 0
+  when: reboot is defined and reboot == True
   tags:
     - configuration
     - network-interfaces
     - network-interfaces-restart-devices
+  ignore_errors: yes
+
+- name: aguardar shutdown
+  wait_for:
+    port: 22
+    host: '{{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}'
+    state: stopped
+  connection: local
+
+- name: aguardar reinicialização
+  wait_for:
+    port: 22
+    host: '{{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}'
+    search_regex: OpenSSH
+    delay: 10
+    sleep: 5
+  connection: local
